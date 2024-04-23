@@ -1,4 +1,4 @@
-# linux-clear-my
+# linux-clear-sun
 
 这仓库存放我自定义的linux-clear的pkgbuild
 

@@ -1,6 +1,3 @@
-# 维护者: Josip Ponjavic <josipponjavic at gmail dot com>
-# 贡献者:
-
 ### 构建选项
 # 将接下来的两个变量设置为非空的任意值，以启用它们
 
@@ -83,7 +80,7 @@ _minor=7
 _srcname=linux-${_major}
 _clr=${_major}.6-1426
 _gcc_more_v='20240221.2'
-pkgbase=linux-clear
+pkgbase=linux-clear-sun
 pkgver=${_major}.${_minor}
 pkgrel=1
 pkgdesc='Clear Linux'

@@ -1,4 +1,4 @@
-pkgbase = linux-clear
+pkgbase = linux-clear-sun
 	pkgdesc = Clear Linux
 	pkgver = 6.8.7
 	pkgrel = 1
@@ -26,7 +26,7 @@ pkgbase = linux-clear
 	sha256sums = SKIP
 	sha256sums = 1d3ac3e581cbc5108f882fcdc75d74f7f069654c71bad65febe5ba15a7a3a14f
 
-pkgname = linux-clear
+pkgname = linux-clear-sun
 	pkgdesc = The Clear Linux kernel and modules
 	install = linux.install
 	depends = coreutils
@@ -39,6 +39,6 @@ pkgname = linux-clear
 	provides = WIREGUARD-MODULE
 	provides = KSMBD-MODULE
 
-pkgname = linux-clear-headers
+pkgname = linux-clear-sun-headers
 	pkgdesc = Headers and scripts for building modules for the Clear Linux kernel
 	depends = pahole
