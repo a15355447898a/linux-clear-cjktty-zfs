@@ -102,6 +102,7 @@ source=(
   "$pkgbase::git+https://github.com/clearlinux-pkgs/linux.git#tag=${_clr}"
   "more-uarches-$_gcc_more_v.tar.gz::https://github.com/graysky2/kernel_compiler_patch/archive/$_gcc_more_v.tar.gz"
   "git+https://github.com/openzfs/zfs.git#branch=zfs-2.2-release"
+  "https://raw.githubusercontent.com/zhmars/cjktty-patches/master/v6.x/cjktty-6.7.patch"
 )
 
 if [ -n "$_use_llvm_lto" ]; then
@@ -139,6 +140,17 @@ prepare() {
         fi
         echo "Applying patch ${i}..."
         patch -Np1 -i "$srcdir/$pkgbase/${i}"
+    done
+
+    ### 添加cjktty补丁
+    local src
+    for src in "${source[@]}"; do
+        src="${src%%::*}"
+        src="${src##*/}"
+        src="${src%.zst}"
+        [[ $src = *.patch ]] || continue
+        echo "Applying patch $src..."
+        patch -Np1 <"../$src"
     done
 
     ### 添加zfs补丁
@@ -437,6 +449,7 @@ sha256sums=('c969dea4e8bb6be991bbf7c010ba0e0a5643a3a8d8fb0a2aaa053406f1e965f3'
             '6ef359c3497d90b0a687d1dc2050d0c662f6a72224c8bf6122847002e145ce11'
             'SKIP'
             '1d3ac3e581cbc5108f882fcdc75d74f7f069654c71bad65febe5ba15a7a3a14f'
+            'SKIP'
             'SKIP')
 
 validpgpkeys=(

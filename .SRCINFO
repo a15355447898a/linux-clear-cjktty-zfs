@@ -27,7 +27,7 @@ pkgbase = linux-clear-sun
 	sha256sums = 1d3ac3e581cbc5108f882fcdc75d74f7f069654c71bad65febe5ba15a7a3a14f
 
 pkgname = linux-clear-sun
-	pkgdesc = The Clear Linux kernel and modules
+	pkgdesc = Clear Linux内核和模块加上zfs和cjktty补丁
 	install = linux.install
 	depends = coreutils
 	depends = kmod
