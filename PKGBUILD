@@ -101,6 +101,7 @@ source=(
   "https://cdn.kernel.org/pub/linux/kernel/v6.x/patch-${pkgver}.xz"
   "$pkgbase::git+https://github.com/clearlinux-pkgs/linux.git#tag=${_clr}"
   "more-uarches-$_gcc_more_v.tar.gz::https://github.com/graysky2/kernel_compiler_patch/archive/$_gcc_more_v.tar.gz"
+  "git+https://github.com/openzfs/zfs.git#branch=zfs-2.2-release"
 )
 
 if [ -n "$_use_llvm_lto" ]; then
@@ -139,6 +140,20 @@ prepare() {
         echo "Applying patch ${i}..."
         patch -Np1 -i "$srcdir/$pkgbase/${i}"
     done
+
+    ### 添加zfs补丁
+    cd ${srcdir}/"zfs"
+    ./autogen.sh
+    ./configure CC=gcc --prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin --libdir=/usr/lib \
+            --datadir=/usr/share --includedir=/usr/include --with-udevdir=/lib/udev \
+            --libexecdir=/usr/lib/zfs --with-config=kernel \
+            --enable-linux-builtin \
+            --with-linux=${srcdir}/$_srcname
+    ./copy-builtin ${srcdir}/${_srcname}
+
+    ### 开启zfs选项
+    cd ${srcdir}/${_srcname}
+    scripts/config -e CONFIG_ZFS
 
     ### 设置配置
     echo "Setting config..."
