@@ -1,4 +1,4 @@
-pkgbase = linux-clear-sun
+pkgbase = linux-clear
 	pkgdesc = Clear Linux
 	pkgver = 6.8.7
 	pkgrel = 1
