@@ -167,6 +167,14 @@ prepare() {
     cd ${srcdir}/${_srcname}
     scripts/config -e CONFIG_ZFS
 
+    ### 开启KEXEC
+    scripts/config -e CONFIG_KEXEC \
+                   -e CONFIG_KEXEC_FILE \
+                   -e CONFIG_KEXEC_SIG \
+                   -e CONFIG_KEXEC_BZIMAGE_VERIFY_SIG \
+                   -e CONFIG_KEXEC_JUMP \
+                   -e CONFIG_KEXEC_CORE
+
     ### 设置配置
     echo "Setting config..."
     cp -Tf $srcdir/$pkgbase/config ./.config
