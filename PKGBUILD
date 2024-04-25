@@ -80,7 +80,7 @@ _minor=7
 _srcname=linux-${_major}
 _clr=${_major}.6-1426
 _gcc_more_v='20240221.2'
-pkgbase=linux-clear-sun
+pkgbase=linux-clear-cjktty-zfs
 pkgver=${_major}.${_minor}
 pkgrel=1
 pkgdesc='Clear Linux内核,带有zfs和cjktty并开启kexec'
@@ -103,6 +103,7 @@ source=(
 	"more-uarches-$_gcc_more_v.tar.gz::https://github.com/graysky2/kernel_compiler_patch/archive/$_gcc_more_v.tar.gz"
 	"git+https://github.com/openzfs/zfs.git#branch=zfs-2.2-release"
 	"https://raw.githubusercontent.com/zhmars/cjktty-patches/master/v6.x/cjktty-6.7.patch"
+	"config"
 )
 
 if [ -n "$_use_llvm_lto" ]; then
@@ -142,6 +143,9 @@ prepare() {
 		patch -Np1 -i "$srcdir/$pkgbase/${i}"
 	done
 
+	### 复制配置
+	cp ../config ./.config
+
 	### 添加cjktty补丁
 	local src
 	for src in "${source[@]}"; do
@@ -153,31 +157,29 @@ prepare() {
 		patch -Np1 <"../$src"
 	done
 
+	### 编译zfs前面的准备
+	make ${BUILD_FLAGS[*]} CFLAGS="-O2 -march=native" CXXFLAGS="-O2 -march=native -lstdc++" prepare -j$(nproc)
+	make ${BUILD_FLAGS[*]} CFLAGS="-O2 -march=native" CXXFLAGS="-O2 -march=native -lstdc++" modules_prepare -j$(nproc)
+
 	### 添加zfs补丁
 	cd ${srcdir}/"zfs"
 	./autogen.sh
+	sed -i "s|\$(uname -r)|${pkgver}-clear-cjktty-zfs|g" configure
 	./configure CC=gcc --prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin --libdir=/usr/lib \
 		--datadir=/usr/share --includedir=/usr/include --with-udevdir=/lib/udev \
 		--libexecdir=/usr/lib/zfs --with-config=kernel \
-		--enable-linux-builtin \
-		--with-linux=${srcdir}/$_srcname
+		--enable-linux-builtin=yes \
+		--with-linux=${srcdir}/${_srcname} \
+		--with-linux-obj=${srcdir}/${_srcname}
 	./copy-builtin ${srcdir}/${_srcname}
 
 	### 开启zfs选项
 	cd ${srcdir}/${_srcname}
 	scripts/config -e CONFIG_ZFS
 
-	### 开启KEXEC
-	scripts/config -e CONFIG_KEXEC \
-		-e CONFIG_KEXEC_FILE \
-		-e CONFIG_KEXEC_SIG \
-		-e CONFIG_KEXEC_BZIMAGE_VERIFY_SIG \
-		-e CONFIG_KEXEC_JUMP \
-		-e CONFIG_KEXEC_CORE
-
 	### 设置配置
-	echo "Setting config..."
-	cp -Tf $srcdir/$pkgbase/config ./.config
+	#echo "Setting config..."
+	#cp -Tf $srcdir/$pkgbase/config ./.config
 
 	### 启用额外选项
 	echo "Enable extra options..."
@@ -457,6 +459,7 @@ sha256sums=('c969dea4e8bb6be991bbf7c010ba0e0a5643a3a8d8fb0a2aaa053406f1e965f3'
 	'6ef359c3497d90b0a687d1dc2050d0c662f6a72224c8bf6122847002e145ce11'
 	'SKIP'
 	'1d3ac3e581cbc5108f882fcdc75d74f7f069654c71bad65febe5ba15a7a3a14f'
+	'SKIP'
 	'SKIP'
 	'SKIP')
 
